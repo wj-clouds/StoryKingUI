@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>谚语故事 - 故事大王</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #fff8e1;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            max-width: 414px; /* iPhone 8 Plus 宽度 */
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background-image: url('images/proverb-bg.png');
+            background-size: cover;
+        }
+        
+        .header {
+            background-color: #FFB74D;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 120%;
+            height: 120%;
+            background-image: url('images/proverb-pattern.png');
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            z-index: 2;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            background-color: white;
+            margin: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .filter-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .filter-tab.active {
+            color: #E65100;
+            border-bottom-color: #E65100;
+            font-weight: bold;
+        }
+        
+        .proverb-list {
+            padding: 0 15px 15px;
+        }
+        
+        .proverb-card {
+            background-color: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .proverb-header {
+            background-color: #FFF3E0;
+            padding: 15px;
+            border-bottom: 1px solid #FFE0B2;
+            position: relative;
+        }
+        
+        .proverb-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #E65100;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        .proverb-origin {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .proverb-content {
+            padding: 15px;
+        }
+        
+        .proverb-meaning {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #FFF8E1;
+            border-radius: 8px;
+            border-left: 3px solid #FFB74D;
+        }
+        
+        .proverb-story {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .proverb-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #999;
+            background-color: #FAFAFA;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .proverb-meta {
+            display: flex;
+            align-items: center;
+        }
+        
+        .proverb-meta i {
+            margin-right: 5px;
+        }
+        
+        .proverb-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .proverb-action {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        
+        .proverb-action i {
+            margin-right: 3px;
+        }
+        
+        .read-more-btn {
+            background-color: #FF9800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .read-more-btn:hover {
+            background-color: #F57C00;
+        }
+        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 414px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #999;
+        }
+        
+        .tab-item.active {
+            color: #E65100;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .tab-label {
+            font-size: 12px;
+        }
+        
+        .content-container {
+            padding-bottom: 70px; /* 为底部导航栏留出空间 */
+        }
+        
+        .proverb-image {
+            width: 100%;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .proverb-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="page-title">谚语故事</div>
+        </div>
+        
+        <div class="content-container">
+            <div class="filter-tabs">
+                <div class="filter-tab active">全部</div>
+                <div class="filter-tab">中国谚语</div>
+                <div class="filter-tab">外国谚语</div>
+                <div class="filter-tab">寓言故事</div>
+            </div>
+            
+            <div class="proverb-list">
+                <div class="proverb-card">
+                    <div class="proverb-header">
+                        <div class="proverb-title">一寸光阴一寸金，寸金难买寸光阴</div>
+                        <div class="proverb-origin">中国古代谚语</div>
+                    </div>
+                    <div class="proverb-content">
+                        <div class="proverb-image" style="background-image: url('images/time-value.jpg');"></div>
+                        <div class="proverb-meaning">
+                            <strong>含义：</strong>这句谚语强调时间的宝贵，告诉人们时间比金钱更有价值，一旦流逝就无法挽回。
+                        </div>
+                        <div class="proverb-story">
+                            相传在古代有一位名叫陈康肃的官员，他非常珍惜时间。每当他看到沙漏中的沙子一点点流下，就会感叹道："一刻千金，岂可空过！"
+                            <br><br>
+                            有一次，他的朋友来访，想与他闲聊消遣。陈康肃却说："时间宝贵，我们不如讨论一些有益的事情。"他的朋友被他的态度所感染，从此也开始珍惜时间。
+                            <br><br>
+                            后来，陈康肃成为了一位学识渊博的大臣，为国家做出了重要贡献。人们常说，正是他对时间的珍视，才使他取得了如此成就。
+                        </div>
+                        <a href="proverb-detail.html?id=1" class="read-more-btn">阅读完整故事</a>
+                    </div>
+                    <div class="proverb-footer">
+                        <div class="proverb-meta">
+                            <i class="fas fa-eye"></i> 1245次阅读
+                        </div>
+                        <div class="proverb-actions">
+                            <div class="proverb-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="proverb-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="proverb-card">
+                    <div class="proverb-header">
+                        <div class="proverb-title">滴水穿石</div>
+                        <div class="proverb-origin">中国古代谚语</div>
+                    </div>
+                    <div class="proverb-content">
+                        <div class="proverb-image" style="background-image: url('images/water-stone.jpg');"></div>
+                        <div class="proverb-meaning">
+                            <strong>含义：</strong>比喻只要坚持不懈，即使是微小的力量也能取得惊人的成就。
+                        </div>
+                        <div class="proverb-story">
+                            古时候，有一位年轻人想要拜一位著名的学者为师。这位学者带他来到一块巨大的石头前，指着石头上的一个小凹槽说："你看，这个凹槽是屋檐上滴下的水珠日复一日地滴落形成的。"
+                            <br><br>
+                            "如果连水滴这样柔弱的东西都能穿透坚硬的石头，那么人的意志如果坚定不移，又有什么困难不能克服呢？"
+                            <br><br>
+                            年轻人受到启发，明白了坚持不懈的重要性，从此刻苦学习，最终成为了一位学识渊博的学者。
+                        </div>
+                        <a href="proverb-detail.html?id=2" class="read-more-btn">阅读完整故事</a>
+                    </div>
+                    <div class="proverb-footer">
+                        <div class="proverb-meta">
+                            <i class="fas fa-eye"></i> 987次阅读
+                        </div>
+                        <div class="proverb-actions">
+                            <div class="proverb-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="proverb-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="proverb-card">
+                    <div class="proverb-header">
+                        <div class="proverb-title">Rome wasn't built in a day</div>
+                        <div class="proverb-origin">英国谚语</div>
+                    </div>
+                    <div class="proverb-content">
+                        <div class="proverb-image" style="background-image: url('images/rome.jpg');"></div>
+                        <div class="proverb-meaning">
+                            <strong>含义：</strong>罗马不是一天建成的。意指伟大的事业需要时间和耐心，不可能一蹴而就。
+                        </div>
+                        <div class="proverb-story">
+                            这句谚语源于中世纪的法国，后来传入英语世界。它提醒人们，罗马这座伟大的城市花了数百年时间才建成，任何重要的成就都需要时间和持续的努力。
+                            <br><br>
+                            有一个故事讲述了一位年轻的艺术家，他拜访了一位著名的雕塑大师。看到大师的杰作，年轻人感叹道："我永远也做不出这样的作品。"
+                            <br><br>
+                            大师微笑着说："年轻人，罗马不是一天建成的。我花了三十年才达到今天的水平。只要你每天进步一点，总有一天也能创作出伟大的作品。"
+                        </div>
+                        <a href="proverb-detail.html?id=3" class="read-more-btn">阅读完整故事</a>
+                    </div>
+                    <div class="proverb-footer">
+                        <div class="proverb-meta">
+                            <i class="fas fa-eye"></i> 756次阅读
+                        </div>
+                        <div class="proverb-actions">
+                            <div class="proverb-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="proverb-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="proverb-card">
+                    <div class="proverb-header">
+                        <div class="proverb-title">狐狸和葡萄</div>
+                        <div class="proverb-origin">伊索寓言</div>
+                    </div>
+                    <div class="proverb-content">
+                        <div class="proverb-image" style="background-image: url('images/fox-grapes.jpg');"></div>
+                        <div class="proverb-meaning">
+                            <strong>含义：</strong>这个寓言故事衍生出"酸葡萄心理"的说法，形容人们对于得不到的东西故意贬低其价值。
+                        </div>
+                        <div class="proverb-story">
+                            有一天，一只饥饿的狐狸看到一串挂在高处的葡萄。它非常想吃这些葡萄，于是跳了又跳，但始终够不着。
+                            <br><br>
+                            最后，狐狸放弃了，边走边自言自语地说："那些葡萄肯定是酸的，不值得我浪费时间。"
+                            <br><br>
+                            这个故事告诉我们，人们常常会为自己的失败找借口，而不是承认自己的不足或继续努力。
+                        </div>
+                        <a href="proverb-detail.html?id=4" class="read-more-btn">阅读完整故事</a>
+                    </div>
+                    <div class="proverb-footer">
+                        <div class="proverb-meta">
+                            <i class="fas fa-eye"></i> 1089次阅读
+                        </div>
+                        <div class="proverb-actions">
+                            <div class="proverb-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="proverb-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="proverb-card">
+                    <div class="proverb-header">
+                        <div class="proverb-title">己所不欲，勿施于人</div>
+                        <div class="proverb-origin">《论语》</div>
+                    </div>
+                    <div class="proverb-content">
+                        <div class="proverb-image" style="background-image: url('images/golden-rule.jpg');"></div>
+                        <div class="proverb-meaning">
+                            <strong>含义：</strong>自己不希望遭受的事情，不要强加给别人。这是中国传统文化中的"仁"的重要体现。
+                        </div>
+                        <div class="proverb-story">
+                            春秋时期，有一次孔子的学生子贡问道："有没有一个字可以终身奉行？"
+                            <br><br>
+                            孔子回答说："那就是'恕'字吧。己所不欲，勿施于人。"
+                            <br><br>
+                            后来，有一位国君请教孔子如何治理国家。孔子说："宽以待人，忠以事君，恕以待民。己所不欲，勿施于人。如此，则民心归附，国家安定。"
+                        </div>
+                        <a href="proverb-detail.html?id=5" class="read-more-btn">阅读完整故事</a>
+                    </div>
+                    <div class="proverb-footer">
+                        <div class="proverb-meta">
+                            <i class="fas fa-eye"></i> 1356次阅读
+                        </div>
+                        <div class="proverb-actions">
+                            <div class="proverb-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="proverb-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-bar">
+            <a href="index.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div class="tab-label">首页</div>
+            </a>
+            
+            <a href="categories.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-th-large"></i></div>
+                <div class="tab-label">分类</div>
+            </a>
+            
+            <a href="favorites.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-star"></i></div>
+                <div class="tab-label">收藏</div>
+            </a>
+            
+            <a href="profile.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-user"></i></div>
+                <div class="tab-label">我的</div>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加标签切换功能
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    // 这里可以添加实际的筛选逻辑
+                });
+            });
+            
+            // 收藏功能
+            const favoriteButtons = document.querySelectorAll('.proverb-action:first-child');
+            favoriteButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('far')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        icon.style.color = '#FF9800';
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                        icon.style.color = '';
+                    }
+                });
+            });
+            
+            // 分享功能
+            const shareButtons = document.querySelectorAll('.proverb-action:last-child');
+            shareButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    alert('分享功能即将上线，敬请期待！');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

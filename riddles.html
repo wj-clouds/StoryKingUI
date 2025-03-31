@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>猜谜语 - 故事大王</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f0ff;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            max-width: 414px; /* iPhone 8 Plus 宽度 */
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background-image: url('images/riddle-bg.png');
+            background-size: cover;
+        }
+        
+        .header {
+            background-color: #B388FF;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 120%;
+            height: 120%;
+            background-image: url('images/riddle-pattern.png');
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            z-index: 2;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            background-color: white;
+            margin: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .filter-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .filter-tab.active {
+            color: #7B1FA2;
+            border-bottom-color: #7B1FA2;
+            font-weight: bold;
+        }
+        
+        .riddle-list {
+            padding: 0 15px 15px;
+        }
+        
+        .riddle-card {
+            background-color: white;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .riddle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background-image: url('images/riddle-corner.png');
+            background-size: contain;
+            background-position: top right;
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .riddle-question {
+            padding: 20px;
+            border-bottom: 1px dashed #eee;
+            position: relative;
+        }
+        
+        .riddle-category {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #E1BEE7;
+            color: #7B1FA2;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .riddle-text {
+            font-size: 18px;
+            line-height: 1.5;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .riddle-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .riddle-answer {
+            padding: 15px;
+            background-color: #f9f9f9;
+            position: relative;
+            display: none;
+            text-align: center;
+        }
+        
+        .riddle-answer.show {
+            display: block;
+        }
+        
+        .riddle-answer-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #7B1FA2;
+            font-weight: bold;
+        }
+        
+        .riddle-explanation {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .riddle-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #999;
+            background-color: white;
+        }
+        
+        .riddle-meta {
+            display: flex;
+            align-items: center;
+        }
+        
+        .riddle-meta i {
+            margin-right: 5px;
+        }
+        
+        .riddle-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .riddle-action {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        
+        .riddle-action i {
+            margin-right: 3px;
+        }
+        
+        .show-answer-btn {
+            background-color: #7B1FA2;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 15px auto 5px;
+            display: block;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .show-answer-btn:hover {
+            background-color: #6A1B9A;
+        }
+        
+        .hide-answer-btn {
+            background-color: #9575CD;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 15px auto 5px;
+            display: block;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .hide-answer-btn:hover {
+            background-color: #7E57C2;
+        }
+        
+        .input-answer {
+            display: flex;
+            margin-top: 15px;
+            padding: 0 15px;
+        }
+        
+        .answer-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .submit-answer {
+            background-color: #7B1FA2;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 414px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #999;
+        }
+        
+        .tab-item.active {
+            color: #7B1FA2;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .tab-label {
+            font-size: 12px;
+        }
+        
+        .content-container {
+            padding-bottom: 70px; /* 为底部导航栏留出空间 */
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .riddle-category {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="page-title">猜谜语</div>
+        </div>
+        
+        <div class="content-container">
+            <div class="filter-tabs">
+                <div class="filter-tab active">全部</div>
+                <div class="filter-tab">字谜</div>
+                <div class="filter-tab">物谜</div>
+                <div class="filter-tab">成语谜</div>
+            </div>
+            
+            <div class="riddle-list">
+                <div class="riddle-card">
+                    <div class="riddle-question">
+                        <div class="riddle-category">字谜</div>
+                        <div class="riddle-text">一人在内，一口在外（打一字）</div>
+                        <div class="riddle-hint">提示：想想"人"和"口"的位置关系</div>
+                        <button class="show-answer-btn" data-id="1">查看答案</button>
+                    </div>
+                    <div class="riddle-answer" id="answer-1">
+                        <div class="riddle-answer-text">囚</div>
+                        <div class="riddle-explanation">解释："囚"字由"人"字被"口"字包围而成，一人在内，一口在外。</div>
+                        <button class="hide-answer-btn" data-id="1">隐藏答案</button>
+                    </div>
+                    <div class="riddle-footer">
+                        <div class="riddle-meta">
+                            <i class="fas fa-user"></i> 古代谜语
+                        </div>
+                        <div class="riddle-actions">
+                            <div class="riddle-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="riddle-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="riddle-card">
+                    <div class="riddle-question">
+                        <div class="riddle-category">物谜</div>
+                        <div class="riddle-text">远看像座山，近看一条线，身体虽不大，本领非常大（打一物）</div>
+                        <div class="riddle-hint">提示：这是一种常见的工具</div>
+                        <button class="show-answer-btn" data-id="2">查看答案</button>
+                    </div>
+                    <div class="riddle-answer" id="answer-2">
+                        <div class="riddle-answer-text">针</div>
+                        <div class="riddle-explanation">解释：针远看像一座小山，近看是一条线，虽然很小，但能缝制衣物，本领很大。</div>
+                        <button class="hide-answer-btn" data-id="2">隐藏答案</button>
+                    </div>
+                    <div class="riddle-footer">
+                        <div class="riddle-meta">
+                            <i class="fas fa-user"></i> 民间谜语
+                        </div>
+                        <div class="riddle-actions">
+                            <div class="riddle-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="riddle-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="riddle-card">
+                    <div class="riddle-question">
+                        <div class="riddle-category">成语谜</div>
+                        <div class="riddle-text">八十万禁军教头（打一成语）</div>
+                        <div class="riddle-hint">提示：与"大"有关</div>
+                        <button class="show-answer-btn" data-id="3">查看答案</button>
+                    </div>
+                    <div class="riddle-answer" id="answer-3">
+                        <div class="riddle-answer-text">一呼百应</div>
+                        <div class="riddle-explanation">解释："八十万禁军教头"指的是林冲，他一声令下，众人响应，故为"一呼百应"。</div>
+                        <button class="hide-answer-btn" data-id="3">隐藏答案</button>
+                    </div>
+                    <div class="riddle-footer">
+                        <div class="riddle-meta">
+                            <i class="fas fa-user"></i> 文学谜语
+                        </div>
+                        <div class="riddle-actions">
+                            <div class="riddle-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="riddle-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="riddle-card">
+                    <div class="riddle-question">
+                        <div class="riddle-category">字谜</div>
+                        <div class="riddle-text">言字旁加个华（打一字）</div>
+                        <div class="riddle-hint">提示：想想"言"字旁加上"华"会是什么字</div>
+                        <div class="input-answer">
+                            <input type="text" class="answer-input" placeholder="请输入答案...">
+                            <button class="submit-answer">提交</button>
+                        </div>
+                    </div>
+                    <div class="riddle-answer" id="answer-4">
+                        <div class="riddle-answer-text">话</div>
+                        <div class="riddle-explanation">解释："话"字由"言"字旁和"华"字的右半部分组成。</div>
+                        <button class="hide-answer-btn" data-id="4">隐藏答案</button>
+                    </div>
+                    <div class="riddle-footer">
+                        <div class="riddle-meta">
+                            <i class="fas fa-user"></i> 儿童谜语
+                        </div>
+                        <div class="riddle-actions">
+                            <div class="riddle-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="riddle-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="riddle-card">
+                    <div class="riddle-question">
+                        <div class="riddle-category">物谜</div>
+                        <div class="riddle-text">身穿绿衣裳，肚里水汪汪，生的子儿多，个个黑脸膛（打一物）</div>
+                        <div class="riddle-hint">提示：这是一种水果</div>
+                        <button class="show-answer-btn" data-id="5">查看答案</button>
+                    </div>
+                    <div class="riddle-answer" id="answer-5">
+                        <div class="riddle-answer-text">西瓜</div>
+                        <div class="riddle-explanation">解释：西瓜外皮绿色，里面多汁，有许多黑色的籽。</div>
+                        <button class="hide-answer-btn" data-id="5">隐藏答案</button>
+                    </div>
+                    <div class="riddle-footer">
+                        <div class="riddle-meta">
+                            <i class="fas fa-user"></i> 民间谜语
+                        </div>
+                        <div class="riddle-actions">
+                            <div class="riddle-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="riddle-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-bar">
+            <a href="index.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div class="tab-label">首页</div>
+            </a>
+            
+            <a href="categories.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-th-large"></i></div>
+                <div class="tab-label">分类</div>
+            </a>
+            
+            <a href="favorites.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-star"></i></div>
+                <div class="tab-label">收藏</div>
+            </a>
+            
+            <a href="profile.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-user"></i></div>
+                <div class="tab-label">我的</div>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示答案按钮
+            const showAnswerBtns = document.querySelectorAll('.show-answer-btn');
+            showAnswerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById(`answer-${id}`).classList.add('show');
+                });
+            });
+            
+            // 隐藏答案按钮
+            const hideAnswerBtns = document.querySelectorAll('.hide-answer-btn');
+            hideAnswerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById(`answer-${id}`).classList.remove('show');
+                });
+            });
+            
+            // 添加标签切换功能
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    // 这里可以添加实际的筛选逻辑
+                });
+            });
+            
+            // 提交答案功能
+            const submitBtn = document.querySelector('.submit-answer');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function() {
+                    const input = document.querySelector('.answer-input');
+                    const answer = input.value.trim();
+                    if (answer.toLowerCase() === '话') {
+                        document.getElementById('answer-4').classList.add('show');
+                        input.value = '';
+                        alert('恭喜你答对了！');
+                    } else if (answer) {
+                        alert('答案不正确，再想想吧！');
+                    } else {
+                        alert('请输入答案');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>童话故事 - 故事大王</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f3e5;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            max-width: 414px; /* iPhone 8 Plus 宽度 */
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background-image: url('images/bg-pattern.png');
+            background-size: cover;
+        }
+        
+        .header {
+            background-color: #FFD180;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 120%;
+            height: 120%;
+            background-image: url('images/fairy-pattern.png');
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            z-index: 2;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-container {
+            padding: 15px 15px 70px; /* 为底部导航栏留出空间 */
+        }
+        
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .story-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .story-image {
+            width: 100%;
+            height: 120px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .story-info {
+            padding: 10px;
+        }
+        
+        .story-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 40px;
+        }
+        
+        .story-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .story-category {
+            color: #FF6D00;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0 15px;
+            color: #FF6D00;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: #FF6D00;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-evenly;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 414px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #999;
+        }
+        
+        .tab-item.active {
+            color: #FF6D00;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .tab-label {
+            font-size: 12px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="page-title">童话故事</div>
+        </div>
+        
+        <div class="content-container">
+            <div class="section-title">经典童话</div>
+            <div class="story-grid">
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story1.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">小红帽历险记</div>
+                        <div class="story-meta">
+                            <div class="story-category">经典童话</div>
+                            <div><i class="fas fa-eye"></i> 1245</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story2.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">聪明的小兔子</div>
+                        <div class="story-meta">
+                            <div class="story-category">经典童话</div>
+                            <div><i class="fas fa-eye"></i> 987</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story3.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">一千零一夜</div>
+                        <div class="story-meta">
+                            <div class="story-category">经典童话</div>
+                            <div><i class="fas fa-eye"></i> 1532</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story5.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">白雪公主与七个小矮人</div>
+                        <div class="story-meta">
+                            <div class="story-category">经典童话</div>
+                            <div><i class="fas fa-eye"></i> 2103</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title">原创故事</div>
+            <div class="story-grid">
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story6.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">小熊的梦想</div>
+                        <div class="story-meta">
+                            <div class="story-category">原创故事</div>
+                            <div><i class="fas fa-eye"></i> 876</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story7.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">勇敢的小鸟</div>
+                        <div class="story-meta">
+                            <div class="story-category">原创故事</div>
+                            <div><i class="fas fa-eye"></i> 654</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story8.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">森林里的音乐会</div>
+                        <div class="story-meta">
+                            <div class="story-category">原创故事</div>
+                            <div><i class="fas fa-eye"></i> 789</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image" style="background-image: url('images/story9.jpg');"></div>
+                    <div class="story-info">
+                        <div class="story-title">小猫钓鱼</div>
+                        <div class="story-meta">
+                            <div class="story-category">原创故事</div>
+                            <div><i class="fas fa-eye"></i> 543</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-bar">
+            <a href="index.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div class="tab-label">首页</div>
+            </a>
+            
+            <a href="favorites.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-star"></i></div>
+                <div class="tab-label">收藏</div>
+            </a>
+            
+            <a href="profile.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-user"></i></div>
+                <div class="tab-label">我的</div>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟图片加载
+            const storyImages = document.querySelectorAll('.story-image');
+            storyImages.forEach(div => {
+                const style = getComputedStyle(div);
+                const bgImage = style.backgroundImage;
+                if (bgImage.includes('url') && !bgImage.includes('http')) {
+                    div.style.backgroundColor = '#f0f0f0';
+                    div.style.backgroundImage = 'none';
+                    
+                    // 添加一个小图标表示图片
+                    const icon = document.createElement('div');
+                    icon.style.width = '100%';
+                    icon.style.height = '100%';
+                    icon.style.display = 'flex';
+                    icon.style.alignItems = 'center';
+                    icon.style.justifyContent = 'center';
+                    icon.style.color = '#999';
+                    icon.innerHTML = '<i class="fas fa-image"></i>';
+                    div.appendChild(icon);
+                }
+            });
+            
+            // 故事卡片点击事件
+            const storyCards = document.querySelectorAll('.story-card');
+            storyCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.story-title').textContent;
+                    const category = this.querySelector('.story-category').textContent;
+                    const views = this.querySelector('.story-meta div:last-child').textContent.replace(/[^0-9]/g, '');
+                    
+                    // 从背景图片URL中提取图片ID
+                    let imageId = 'story1';
+                    const bgImage = this.querySelector('.story-image').style.backgroundImage;
+                    if (bgImage) {
+                        const match = bgImage.match(/images\/([^\.]+)\.jpg/);
+                        if (match && match[1]) {
+                            imageId = match[1];
+                        }
+                    }
+                    
+                    // 跳转到故事内容页面
+                    window.location.href = `story-content.html?title=${encodeURIComponent(title)}&category=${encodeURIComponent(category)}&views=${views}&image=${imageId}`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

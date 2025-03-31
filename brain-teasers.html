@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>脑筋急转弯 - 故事大王</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            max-width: 414px; /* iPhone 8 Plus 宽度 */
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            background-image: url('images/brain-bg.png');
+            background-size: cover;
+        }
+        
+        .header {
+            background-color: #80D8FF;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 120%;
+            height: 120%;
+            background-image: url('images/brain-pattern.png');
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 20px;
+            z-index: 2;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            background-color: white;
+            margin: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .filter-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .filter-tab.active {
+            color: #0288D1;
+            border-bottom-color: #0288D1;
+            font-weight: bold;
+        }
+        
+        .brain-teaser-list {
+            padding: 0 15px 15px;
+        }
+        
+        .brain-teaser-card {
+            background-color: white;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .brain-teaser-question {
+            padding: 15px;
+            border-bottom: 1px dashed #eee;
+            position: relative;
+        }
+        
+        .brain-teaser-question::before {
+            content: 'Q';
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            width: 24px;
+            height: 24px;
+            background-color: #80D8FF;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .brain-teaser-text {
+            font-size: 16px;
+            line-height: 1.5;
+            padding-left: 35px;
+            font-weight: 500;
+        }
+        
+        .brain-teaser-answer {
+            padding: 15px;
+            background-color: #f9f9f9;
+            position: relative;
+            display: none;
+        }
+        
+        .brain-teaser-answer.show {
+            display: block;
+        }
+        
+        .brain-teaser-answer::before {
+            content: 'A';
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            width: 24px;
+            height: 24px;
+            background-color: #FF9E80;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .brain-teaser-answer-text {
+            font-size: 14px;
+            line-height: 1.5;
+            padding-left: 35px;
+            color: #666;
+        }
+        
+        .brain-teaser-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #999;
+            background-color: white;
+        }
+        
+        .brain-teaser-meta {
+            display: flex;
+            align-items: center;
+        }
+        
+        .brain-teaser-meta i {
+            margin-right: 5px;
+        }
+        
+        .brain-teaser-difficulty {
+            display: flex;
+            align-items: center;
+        }
+        
+        .difficulty-stars {
+            display: flex;
+            margin-left: 5px;
+        }
+        
+        .difficulty-star {
+            color: #FFD700;
+            margin-right: 2px;
+        }
+        
+        .difficulty-star.empty {
+            color: #ddd;
+        }
+        
+        .brain-teaser-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .brain-teaser-action {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        
+        .brain-teaser-action i {
+            margin-right: 3px;
+        }
+        
+        .show-answer-btn {
+            background-color: #0288D1;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .show-answer-btn:hover {
+            background-color: #0277BD;
+        }
+        
+        .hide-answer-btn {
+            background-color: #FF9E80;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .hide-answer-btn:hover {
+            background-color: #FF8A65;
+        }
+        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 414px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #999;
+        }
+        
+        .tab-item.active {
+            color: #0288D1;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .tab-label {
+            font-size: 12px;
+        }
+        
+        .content-container {
+            padding-bottom: 70px; /* 为底部导航栏留出空间 */
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="page-title">脑筋急转弯</div>
+        </div>
+        
+        <div class="content-container">
+            <div class="filter-tabs">
+                <div class="filter-tab active">全部</div>
+                <div class="filter-tab">简单</div>
+                <div class="filter-tab">中等</div>
+                <div class="filter-tab">困难</div>
+            </div>
+            
+            <div class="brain-teaser-list">
+                <div class="brain-teaser-card">
+                    <div class="brain-teaser-question">
+                        <div class="brain-teaser-text">什么东西明明是你的，却总是被别人用？</div>
+                        <button class="show-answer-btn" data-id="1">查看答案</button>
+                    </div>
+                    <div class="brain-teaser-answer" id="answer-1">
+                        <div class="brain-teaser-answer-text">你的名字。</div>
+                        <button class="hide-answer-btn" data-id="1">隐藏答案</button>
+                    </div>
+                    <div class="brain-teaser-footer">
+                        <div class="brain-teaser-meta">
+                            <div class="brain-teaser-difficulty">
+                                难度：
+                                <div class="difficulty-stars">
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star empty"></i>
+                                    <i class="fas fa-star difficulty-star empty"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="brain-teaser-actions">
+                            <div class="brain-teaser-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="brain-teaser-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brain-teaser-card">
+                    <div class="brain-teaser-question">
+                        <div class="brain-teaser-text">小明从不带雨伞，也不穿雨衣，为什么他淋雨时从来不会被淋湿？</div>
+                        <button class="show-answer-btn" data-id="2">查看答案</button>
+                    </div>
+                    <div class="brain-teaser-answer" id="answer-2">
+                        <div class="brain-teaser-answer-text">因为他淋雨的时候，天没下雨。</div>
+                        <button class="hide-answer-btn" data-id="2">隐藏答案</button>
+                    </div>
+                    <div class="brain-teaser-footer">
+                        <div class="brain-teaser-meta">
+                            <div class="brain-teaser-difficulty">
+                                难度：
+                                <div class="difficulty-stars">
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star empty"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="brain-teaser-actions">
+                            <div class="brain-teaser-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="brain-teaser-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brain-teaser-card">
+                    <div class="brain-teaser-question">
+                        <div class="brain-teaser-text">有一种东西，你越是想要抓住它，它就越容易溜走，这是什么？</div>
+                        <button class="show-answer-btn" data-id="3">查看答案</button>
+                    </div>
+                    <div class="brain-teaser-answer" id="answer-3">
+                        <div class="brain-teaser-answer-text">时间。</div>
+                        <button class="hide-answer-btn" data-id="3">隐藏答案</button>
+                    </div>
+                    <div class="brain-teaser-footer">
+                        <div class="brain-teaser-meta">
+                            <div class="brain-teaser-difficulty">
+                                难度：
+                                <div class="difficulty-stars">
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="brain-teaser-actions">
+                            <div class="brain-teaser-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="brain-teaser-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brain-teaser-card">
+                    <div class="brain-teaser-question">
+                        <div class="brain-teaser-text">什么东西可以从天上掉下来，但不会摔碎？</div>
+                        <button class="show-answer-btn" data-id="4">查看答案</button>
+                    </div>
+                    <div class="brain-teaser-answer" id="answer-4">
+                        <div class="brain-teaser-answer-text">雨、雪、雾。</div>
+                        <button class="hide-answer-btn" data-id="4">隐藏答案</button>
+                    </div>
+                    <div class="brain-teaser-footer">
+                        <div class="brain-teaser-meta">
+                            <div class="brain-teaser-difficulty">
+                                难度：
+                                <div class="difficulty-stars">
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star empty"></i>
+                                    <i class="fas fa-star difficulty-star empty"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="brain-teaser-actions">
+                            <div class="brain-teaser-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="brain-teaser-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brain-teaser-card">
+                    <div class="brain-teaser-question">
+                        <div class="brain-teaser-text">什么东西有头无脚，有脸无手，有脖子无肩膀？</div>
+                        <button class="show-answer-btn" data-id="5">查看答案</button>
+                    </div>
+                    <div class="brain-teaser-answer" id="answer-5">
+                        <div class="brain-teaser-answer-text">硬币。</div>
+                        <button class="hide-answer-btn" data-id="5">隐藏答案</button>
+                    </div>
+                    <div class="brain-teaser-footer">
+                        <div class="brain-teaser-meta">
+                            <div class="brain-teaser-difficulty">
+                                难度：
+                                <div class="difficulty-stars">
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star"></i>
+                                    <i class="fas fa-star difficulty-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="brain-teaser-actions">
+                            <div class="brain-teaser-action">
+                                <i class="far fa-heart"></i> 收藏
+                            </div>
+                            <div class="brain-teaser-action">
+                                <i class="fas fa-share-alt"></i> 分享
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-bar">
+            <a href="index.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div class="tab-label">首页</div>
+            </a>
+            
+            <a href="categories.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-th-large"></i></div>
+                <div class="tab-label">分类</div>
+            </a>
+            
+            <a href="favorites.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-star"></i></div>
+                <div class="tab-label">收藏</div>
+            </a>
+            
+            <a href="profile.html" class="tab-item">
+                <div class="tab-icon"><i class="fas fa-user"></i></div>
+                <div class="tab-label">我的</div>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示答案按钮
+            const showAnswerBtns = document.querySelectorAll('.show-answer-btn');
+            showAnswerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById(`answer-${id}`).classList.add('show');
+                });
+            });
+            
+            // 隐藏答案按钮
+            const hideAnswerBtns = document.querySelectorAll('.hide-answer-btn');
+            hideAnswerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById(`answer-${id}`).classList.remove('show');
+                });
+            });
+            
+            // 添加标签切换功能
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    // 这里可以添加实际的筛选逻辑
+                });
+            });
+        });
+    </script>
+</body>
+</html>
